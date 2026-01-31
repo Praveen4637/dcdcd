@@ -1,0 +1,19 @@
+name: Salesforce Deployment
+on:
+ push:
+ branches: [ main ]
+jobs:
+ deploy:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v3
+ - name: Authenticate to Salesforce
+ uses: amtrack/sfdx-action@v1
+ with:
+ username: ${{ secrets.SF_USERNAME }}
+ password: ${{ secrets.SF_PASSWORD }}
+ - name: Deploy Metadata
+ run: sfdx force:source:deploy -p force-app/main/default -u DevOrg
+ - name: Run Tests
+ run: sfdx force:apex:test:run -u DevOrg --resultformat human --wait 
+ 
